@@ -1,0 +1,44 @@
+# Get all orders
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/orders
+
+# Get orders from a specific vendor
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/orders?vendor=Acme
+
+# Get orders with specific status
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/orders?status=Approved
+
+# Get a specific order by PO number
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/orders/PO-2026-12345
+
+# Get approval status summary
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/approval-summary
+
+# Get orders assigned to a specific person
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/assigned-to?assigned_to=Alice
+
+# Get orders by department
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/by-department?department=IT
+
+# Get orders by location
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/by-location?location=New%20York
+
+# Get high-value orders (over $10,000)
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/high-value-orders?min_amount=10000
+
+# Get pending approvals
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/pending-approvals
+
+# Get orders within date range
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/orders-by-date-range?start_date=2026-01-01&end_date=2026-01-31
+
+# Search for orders
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/search?query=Acme&search_fields=vendor
+
+# Get complete dashboard
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/summary-dashboard
+
+# Get statistics
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/statistics
+
+# Download CSV
+curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/download -o export.csv
