@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import pandas as pd
 import os
 from typing import List, Dict, Optional
@@ -35,9 +36,19 @@ async def root():
             "order_by_id": "/api/orders/{po_number}",
             "download_csv": "/api/download",
             "statistics": "/api/statistics",
-            "filter": "/api/orders?vendor=&status="
+            "filter": "/api/orders?vendor=&status=",
+            "voice_dashboard": "/dashboard"
         }
     }
+
+@app.get("/dashboard")
+async def get_voice_dashboard():
+    """Serve the voice-enabled dashboard"""
+    dashboard_path = os.path.join(os.path.dirname(__file__), "voice-dashboard.html")
+    if os.path.exists(dashboard_path):
+        with open(dashboard_path, 'r') as f:
+            return HTMLResponse(content=f.read())
+    raise HTTPException(status_code=404, detail="Voice dashboard not found")
 
 @app.get("/api/orders")
 async def get_all_orders(

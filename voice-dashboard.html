@@ -302,8 +302,8 @@
     </div>
 
     <script>
-        // Production API running on leapcell.io
-        const API_BASE_URL = 'https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev';
+        // Use relative API URL (works on leapcell.io or localhost)
+        const API_BASE_URL = window.location.origin;
         
         // Speech Recognition Setup
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -431,7 +431,8 @@
                 statusText.className = 'status-text';
             } catch (error) {
                 console.error('Fetch error:', error);
-                resultsArea.value = `❌ Error: ${error.message}\n\n📍 API URL: ${API_BASE_URL}\n\n💡 Make sure the API server is running on localhost:8000\n\nTo start the API, run:\ncd /Users/bhimsunnyrajbolluru/Documents/PO\npython3 main.py`;
+                const setupInstructions = `❌ Error: ${error.message}\n\n📍 API URL: ${API_BASE_URL}\n\n💡 SOLUTION: You're opening the HTML file directly (file:// protocol).\n\nTo fix this, host it on a web server:\n\n1. Run this command:\n   cd /Users/bhimsunnyrajbolluru/Documents/PO\n   python3 -m http.server 8080\n\n2. Then open:\n   http://localhost:8080/voice-dashboard.html\n\n3. Now voice commands will work! 🎙️`;
+                resultsArea.value = setupInstructions;
                 statusText.textContent = '❌ Error executing command';
                 statusText.className = 'status-text error';
             }
