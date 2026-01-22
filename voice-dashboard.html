@@ -44,6 +44,45 @@
         .header p {
             color: #666;
             font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .header .subtitle {
+            color: #999;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .header .examples {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .header .examples-title {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .header .examples-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .header .example-tag {
+            background: white;
+            color: #555;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .voice-section {
@@ -263,6 +302,19 @@
         <div class="header">
             <h1>🎤 Voice-Enabled PO Dashboard</h1>
             <p>Speak your commands to query purchase order data</p>
+            <div class="examples">
+                <div class="examples-title">💡 Try saying:</div>
+                <div class="examples-list">
+                    <span class="example-tag">"Show me statistics"</span>
+                    <span class="example-tag">"Get approval summary"</span>
+                    <span class="example-tag">"Orders by department IT"</span>
+                    <span class="example-tag">"Pending approvals"</span>
+                    <span class="example-tag">"Dashboard"</span>
+                    <span class="example-tag">"High value orders over 10000"</span>
+                    <span class="example-tag">"Search for Acme"</span>
+                    <span class="example-tag">"Show all orders"</span>
+                </div>
+            </div>
         </div>
 
         <div class="voice-section">
