@@ -36,7 +36,7 @@ async def root():
             "order_by_id": "/api/orders/{po_number}",
             "download_csv": "/api/download",
             "statistics": "/api/statistics",
-            "filter": "/api/orders?vendor=&status=",
+            "filter": "/api/orders?vendor=&priority=",
             "voice_dashboard": "/dashboard"
         }
     }
@@ -55,7 +55,7 @@ async def get_all_orders(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     vendor: Optional[str] = None,
-    status: Optional[str] = None
+    priority: Optional[str] = None
 ) -> Dict:
     """Get all Purchase Orders with pagination and filtering"""
     try:
@@ -65,8 +65,8 @@ async def get_all_orders(
         # Apply filters
         if vendor:
             df = df[df['Vendor'].str.contains(vendor, case=False, na=False)]
-        if status:
-            df = df[df['Status'].str.contains(status, case=False, na=False)]
+        if priority:
+            df = df[df['Priority'].str.contains(priority, case=False, na=False)]
         
         # Pagination
         total = len(df)
@@ -77,7 +77,7 @@ async def get_all_orders(
             "skip": skip,
             "limit": limit,
             "count": len(df),
-            "orders": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Status', 'Approval Status', 'Department']].to_dict(orient="records")
+            "orders": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Priority', 'Approval Status', 'Department']].to_dict(orient="records")
         }
     except pd.errors.EmptyDataError:
         raise HTTPException(status_code=400, detail="CSV file is empty")
@@ -110,7 +110,7 @@ async def get_statistics() -> Dict:
             "total_orders": len(df),
             "total_amount": float(df['Grand Total'].sum()),
             "average_order_value": float(df['Grand Total'].mean()),
-            "by_status": df['Status'].value_counts().to_dict(),
+            "by_priority": df['Priority'].value_counts().to_dict(),
             "by_vendor": df['Vendor'].value_counts().to_dict(),
             "by_department": df['Department'].value_counts().to_dict(),
             "by_currency": df['Currency'].value_counts().to_dict(),
@@ -158,7 +158,7 @@ async def get_unique_departments() -> Dict:
 @app.post("/api/export")
 async def export_filtered_data(
     vendor: Optional[str] = None,
-    status: Optional[str] = None
+    priority: Optional[str] = None
 ) -> Dict:
     """Export filtered data"""
     try:
@@ -167,10 +167,10 @@ async def export_filtered_data(
         
         if vendor:
             df = df[df['Vendor'].str.contains(vendor, case=False, na=False)]
-        if status:
-            df = df[df['Status'].str.contains(status, case=False, na=False)]
+        if priority:
+            df = df[df['Priority'].str.contains(priority, case=False, na=False)]
         
-        return {"exported_records": len(df), "data": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Status', 'Approval Status', 'Department', 'Assigned To']].to_dict(orient="records")}
+        return {"exported_records": len(df), "data": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Priority', 'Approval Status', 'Department', 'Assigned To']].to_dict(orient="records")}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -195,7 +195,7 @@ async def get_approval_summary() -> Dict:
                 "total_amount": float(status_df['Grand Total'].sum()),
                 "average_amount": float(status_df['Grand Total'].mean()),
                 "assigned_to": status_df['Assigned To'].unique().tolist(),
-                "orders": status_df[['PO Number', 'Vendor', 'Assigned To', 'Grand Total', 'Status', 'Approval Status', 'PO Date']].to_dict(orient='records')
+                "orders": status_df[['PO Number', 'Vendor', 'Assigned To', 'Grand Total', 'Priority', 'Approval Status', 'PO Date']].to_dict(orient='records')
             }
         
         return {
@@ -224,7 +224,7 @@ async def get_by_assigned_to(assigned_to: Optional[str] = None) -> Dict:
                 "grand_total": float(person_df['Grand Total'].sum()),
                 "average_order_value": float(person_df['Grand Total'].mean()),
                 "approval_status_breakdown": person_df['Approval Status'].value_counts().to_dict(),
-                "orders": person_df[['PO Number', 'Vendor', 'Approval Status', 'Grand Total', 'Status']].to_dict(orient='records')
+                "orders": person_df[['PO Number', 'Vendor', 'Approval Status', 'Grand Total', 'Priority']].to_dict(orient='records')
             }
         
         return {
@@ -252,7 +252,7 @@ async def get_by_department(department: Optional[str] = None) -> Dict:
                 "orders_count": len(dept_df),
                 "grand_total": float(dept_df['Grand Total'].sum()),
                 "average_order_value": float(dept_df['Grand Total'].mean()),
-                "status_breakdown": dept_df['Status'].value_counts().to_dict(),
+                "priority_breakdown": dept_df['Priority'].value_counts().to_dict(),
                 "locations": dept_df['Location'].unique().tolist()
             }
         
@@ -374,7 +374,7 @@ async def get_high_value_orders(min_amount: float = Query(5000, ge=0)) -> Dict:
             "count": len(high_value),
             "total_value": float(high_value['Grand Total'].sum()),
             "average_value": float(high_value['Grand Total'].mean()),
-            "orders": high_value[['PO Number', 'Vendor', 'Grand Total', 'Status', 'Approval Status']].to_dict(orient='records')
+            "orders": high_value[['PO Number', 'Vendor', 'Grand Total', 'Priority', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -394,7 +394,7 @@ async def get_pending_approvals() -> Dict:
             "average_pending_value": float(pending['Grand Total'].mean()),
             "by_department": pending['Department'].value_counts().to_dict(),
             "by_assigned_to": pending['Assigned To'].value_counts().to_dict(),
-            "orders": pending[['PO Number', 'Vendor', 'Grand Total', 'Department', 'Assigned To', 'Status', 'Approval Status']].to_dict(orient='records')
+            "orders": pending[['PO Number', 'Vendor', 'Grand Total', 'Department', 'Assigned To', 'Priority', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -417,7 +417,7 @@ async def get_orders_by_date_range(start_date: str, end_date: str) -> Dict:
             "orders_count": len(filtered),
             "total_amount": float(filtered['Grand Total'].sum()),
             "average_amount": float(filtered['Grand Total'].mean()),
-            "orders": filtered[['PO Number', 'PO Date', 'Vendor', 'Grand Total', 'Status', 'Approval Status']].to_dict(orient='records')
+            "orders": filtered[['PO Number', 'PO Date', 'Vendor', 'Grand Total', 'Priority', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -478,7 +478,7 @@ async def search_orders(
             "search_fields": search_fields,
             "results_count": len(result),
             "total_value": float(result['Grand Total'].sum()),
-            "orders": result[['PO Number', 'Vendor', 'Item Description', 'Grand Total', 'Status', 'Approval Status']].to_dict(orient='records')
+            "orders": result[['PO Number', 'Vendor', 'Item Description', 'Grand Total', 'Priority', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -496,7 +496,7 @@ async def get_summary_dashboard() -> Dict:
             "average_order_value": float(df['Grand Total'].mean()),
             "min_order_value": float(df['Grand Total'].min()),
             "max_order_value": float(df['Grand Total'].max()),
-            "by_status": df['Status'].value_counts().to_dict(),
+            "by_priority": df['Priority'].value_counts().to_dict(),
             "by_approval_status": df['Approval Status'].value_counts().to_dict(),
             "by_department": df['Department'].value_counts().to_dict(),
             "by_location": df['Location'].value_counts().to_dict(),

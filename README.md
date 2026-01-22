@@ -34,8 +34,8 @@ The API will be available at `http://localhost:8000`
 
 ### Purchase Order Endpoints
 - `GET /api/orders` - Get all orders with pagination and filtering
-  - Query params: `skip`, `limit`, `vendor`, `status`
-  - Example: `/api/orders?vendor=Acme&status=Approved&skip=0&limit=10`
+  - Query params: `skip`, `limit`, `vendor`, `priority`
+  - Example: `/api/orders?vendor=Acme&priority=High&skip=0&limit=10`
 
 - `GET /api/orders/{po_number}` - Get a specific order by PO Number
   - Example: `/api/orders/PO-2026-12345`
@@ -104,7 +104,7 @@ The API will be available at `http://localhost:8000`
 - `GET /api/download` - Download the entire CSV file
 
 - `POST /api/export` - Export filtered data as JSON
-  - Query params: `vendor`, `status` (optional)
+  - Query params: `vendor`, `priority` (optional)
 
 ## Interactive API Documentation
 
@@ -121,8 +121,8 @@ curl http://localhost:8000/api/orders
 # Get orders from a specific vendor
 curl http://localhost:8000/api/orders?vendor=Acme
 
-# Get orders with specific status
-curl http://localhost:8000/api/orders?status=Approved
+# Get orders with specific priority
+curl http://localhost:8000/api/orders?priority=High
 
 # Get a specific order by PO number
 curl http://localhost:8000/api/orders/PO-2026-12345
@@ -169,8 +169,21 @@ PO/
 ├── purchase_orders.csv     # Generated CSV file
 ├── main.py                 # FastAPI application
 ├── requirements.txt        # Python dependencies
+├── voice-dashboard.html    # Voice-enabled web dashboard
 └── README.md              # This file
 ```
+
+## Data Fields
+
+### Purchase Order CSV Structure
+- **PO Number**: Unique purchase order identifier (PO-YYYY-#####)
+- **Priority**: Order urgency level (Low, Medium, High, Urgent)
+- **Approval Status**: Management approval workflow state (Pending, Approved, Rejected)
+- **Status**: Order fulfillment state (Draft, Pending, Approved, Received, Cancelled, Partial)
+- **Vendor**: Supplier name
+- **Department**: Internal department requesting the order
+- **Grand Total**: Total order amount with tax
+- And other related fields (PO Date, Delivery Date, Location, Created By, Assigned To, etc.)
 
 ## Notes
 

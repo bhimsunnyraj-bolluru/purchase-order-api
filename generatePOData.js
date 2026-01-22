@@ -34,6 +34,7 @@ const items = [
 ];
 
 const statuses = ['Draft', 'Pending', 'Approved', 'Received', 'Cancelled', 'Partial'];
+const priorities = ['Low', 'Medium', 'High', 'Urgent'];
 const paymentTerms = ['Net 30', 'Net 60', 'Net 90', 'COD', '2/10 Net 30', 'Due on Receipt'];
 const currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
 
@@ -99,11 +100,11 @@ function generatePORecord() {
     'Unit Price': lineItems[0].unitPrice,
     'Total Amount': itemsTotal.toFixed(2),
     'Currency': getRandomElement(currencies),
-    'Status': getRandomElement(statuses),
     'Payment Terms': getRandomElement(paymentTerms),
     'Department': getRandomElement(['IT', 'Operations', 'Finance', 'HR', 'Logistics']),
     'Location': getRandomElement(['New York', 'Los Angeles', 'Chicago', 'Toronto', 'London', 'Sydney']),
     'Approval Status': getRandomElement(['Pending', 'Approved', 'Rejected']),
+    'Priority': getRandomElement(priorities),
     'Notes': getRandomElement(['', 'Urgent delivery required', 'Special packaging needed', 'Standard delivery', 'Quality inspection required']),
     'Tax Amount': (itemsTotal * 0.1).toFixed(2),
     'Grand Total': (itemsTotal * 1.1).toFixed(2),
