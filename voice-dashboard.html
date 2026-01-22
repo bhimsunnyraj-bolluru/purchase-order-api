@@ -302,9 +302,8 @@
     </div>
 
     <script>
-        // Detect API URL - use localhost if available, otherwise use remote
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '';
-        const API_BASE_URL = isLocalhost ? 'http://localhost:8000' : 'https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev';
+        // Production API running on leapcell.io
+        const API_BASE_URL = 'https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev';
         
         // Speech Recognition Setup
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
