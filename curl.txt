@@ -42,3 +42,16 @@ curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/a
 
 # Download CSV
 curl https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev/api/download -o export.csv
+
+
+# Test approval summary
+curl http://localhost:8000/api/approval-summary | json_pp
+
+# Test pending approvals
+curl http://localhost:8000/api/pending-approvals | json_pp
+
+# Test all orders
+curl http://localhost:8000/api/orders | json_pp
+
+# Test search
+curl "http://localhost:8000/api/search?query=Acme" | json_pp

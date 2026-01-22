@@ -77,7 +77,7 @@ async def get_all_orders(
             "skip": skip,
             "limit": limit,
             "count": len(df),
-            "orders": df.to_dict(orient="records")
+            "orders": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Status', 'Approval Status', 'Department']].to_dict(orient="records")
         }
     except pd.errors.EmptyDataError:
         raise HTTPException(status_code=400, detail="CSV file is empty")
@@ -170,7 +170,7 @@ async def export_filtered_data(
         if status:
             df = df[df['Status'].str.contains(status, case=False, na=False)]
         
-        return {"exported_records": len(df), "data": df.to_dict(orient="records")}
+        return {"exported_records": len(df), "data": df[['PO Number', 'Vendor', 'PO Date', 'Grand Total', 'Status', 'Approval Status', 'Department', 'Assigned To']].to_dict(orient="records")}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -195,7 +195,7 @@ async def get_approval_summary() -> Dict:
                 "total_amount": float(status_df['Grand Total'].sum()),
                 "average_amount": float(status_df['Grand Total'].mean()),
                 "assigned_to": status_df['Assigned To'].unique().tolist(),
-                "orders": status_df[['PO Number', 'Vendor', 'Assigned To', 'Grand Total', 'Status', 'PO Date']].to_dict(orient='records')
+                "orders": status_df[['PO Number', 'Vendor', 'Assigned To', 'Grand Total', 'Status', 'Approval Status', 'PO Date']].to_dict(orient='records')
             }
         
         return {
@@ -394,7 +394,7 @@ async def get_pending_approvals() -> Dict:
             "average_pending_value": float(pending['Grand Total'].mean()),
             "by_department": pending['Department'].value_counts().to_dict(),
             "by_assigned_to": pending['Assigned To'].value_counts().to_dict(),
-            "orders": pending[['PO Number', 'Vendor', 'Grand Total', 'Department', 'Assigned To', 'Status']].to_dict(orient='records')
+            "orders": pending[['PO Number', 'Vendor', 'Grand Total', 'Department', 'Assigned To', 'Status', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -417,7 +417,7 @@ async def get_orders_by_date_range(start_date: str, end_date: str) -> Dict:
             "orders_count": len(filtered),
             "total_amount": float(filtered['Grand Total'].sum()),
             "average_amount": float(filtered['Grand Total'].mean()),
-            "orders": filtered[['PO Number', 'PO Date', 'Vendor', 'Grand Total', 'Status']].to_dict(orient='records')
+            "orders": filtered[['PO Number', 'PO Date', 'Vendor', 'Grand Total', 'Status', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -478,7 +478,7 @@ async def search_orders(
             "search_fields": search_fields,
             "results_count": len(result),
             "total_value": float(result['Grand Total'].sum()),
-            "orders": result[['PO Number', 'Vendor', 'Item Description', 'Grand Total', 'Status']].to_dict(orient='records')
+            "orders": result[['PO Number', 'Vendor', 'Item Description', 'Grand Total', 'Status', 'Approval Status']].to_dict(orient='records')
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
