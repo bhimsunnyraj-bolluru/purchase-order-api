@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice-Enabled PO Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 900px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .voice-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .mic-button.recording {
+            background: #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 30px rgba(220, 53, 69, 0.8);
+            }
+        }
+
+        .status-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 20px;
+        }
+
+        .status-text.listening {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-text.processing {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .status-text.error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .voice-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+
+        .voice-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .buttons-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .results-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .results-area {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            background: white;
+            resize: vertical;
+            overflow-y: auto;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .command-suggestions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
+        .command-suggestions h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .command-suggestions ul {
+            list-style: none;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .command-suggestions li:before {
+            content: "🎤 ";
+            margin-right: 5px;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Voice-Enabled PO Dashboard</h1>
+            <p>Speak your commands to query purchase order data</p>
+        </div>
+
+        <div class="voice-section">
+            <button class="mic-button" id="micButton" title="Click to record">
+                🎙️
+            </button>
+            <div class="status-text" id="statusText"></div>
+            <div style="margin-top: 10px;">
+                <input type="text" class="voice-input" id="voiceInput" placeholder="Your voice command will appear here..." readonly>
+            </div>
+        </div>
+
+        <div class="buttons-section">
+            <button class="btn btn-primary" id="sendBtn" disabled>📤 Send Command</button>
+            <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
+            <button class="btn btn-secondary" id="copyBtn">📋 Copy Results</button>
+        </div>
+
+        <div class="results-section">
+            <h3>📊 Results</h3>
+            <textarea class="results-area" id="resultsArea" readonly></textarea>
+        </div>
+
+        <div class="command-suggestions">
+            <h4>💡 Try saying:</h4>
+            <ul>
+                <li>"Show me statistics"</li>
+                <li>"Get approval summary"</li>
+                <li>"Orders by department IT"</li>
+                <li>"Pending approvals"</li>
+                <li>"Dashboard"</li>
+                <li>"High value orders over 10000"</li>
+                <li>"Search for Acme"</li>
+                <li>"Show all orders"</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Detect API URL - use localhost if available, otherwise use remote
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '';
+        const API_BASE_URL = isLocalhost ? 'http://localhost:8000' : 'https://purchase-order-api-bhimsunnyraj-bolluru2412-407hgkqo.leapcell.dev';
+        
+        // Speech Recognition Setup
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        let isListening = false;
+        let voiceCommand = '';
+
+        const micButton = document.getElementById('micButton');
+        const statusText = document.getElementById('statusText');
+        const voiceInput = document.getElementById('voiceInput');
+        const resultsArea = document.getElementById('resultsArea');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // Mic Button Click
+        micButton.addEventListener('click', () => {
+            if (!isListening) {
+                recognition.start();
+                isListening = true;
+                micButton.classList.add('recording');
+                statusText.textContent = '🎤 Listening...';
+                statusText.className = 'status-text listening';
+                voiceInput.value = '';
+            } else {
+                recognition.stop();
+            }
+        });
+
+        // Speech Recognition Events
+        recognition.onstart = () => {
+            isListening = true;
+            micButton.classList.add('recording');
+            statusText.textContent = '🎤 Listening...';
+            statusText.className = 'status-text listening';
+        };
+
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    voiceCommand += transcript + ' ';
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+            voiceInput.value = voiceCommand + interimTranscript;
+        };
+
+        recognition.onerror = (event) => {
+            statusText.textContent = `❌ Error: ${event.error}`;
+            statusText.className = 'status-text error';
+            micButton.classList.remove('recording');
+            isListening = false;
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            micButton.classList.remove('recording');
+            statusText.textContent = '✅ Recording stopped';
+            statusText.className = 'status-text';
+            if (voiceCommand.trim()) {
+                sendBtn.disabled = false;
+            }
+        };
+
+        // Parse voice command and call appropriate API
+        async function processCommand(command) {
+            const cmd = command.toLowerCase().trim();
+            statusText.textContent = '⏳ Processing command...';
+            statusText.className = 'status-text processing';
+            resultsArea.value = 'Loading...';
+
+            try {
+                let url = API_BASE_URL;
+
+                if (cmd.includes('statistic')) {
+                    url += '/api/statistics';
+                } else if (cmd.includes('approval') && cmd.includes('summary')) {
+                    url += '/api/approval-summary';
+                } else if (cmd.includes('approval') || cmd.includes('pending')) {
+                    url += '/api/pending-approvals';
+                } else if (cmd.includes('dashboard')) {
+                    url += '/api/summary-dashboard';
+                } else if (cmd.includes('department')) {
+                    const dept = extractValue(cmd, 'department');
+                    url += `/api/by-department${dept ? '?department=' + dept : ''}`;
+                } else if (cmd.includes('location')) {
+                    const loc = extractValue(cmd, 'location');
+                    url += `/api/by-location${loc ? '?location=' + encodeURIComponent(loc) : ''}`;
+                } else if (cmd.includes('high value') || cmd.includes('high-value')) {
+                    const amount = extractNumber(cmd);
+                    url += `/api/high-value-orders?min_amount=${amount || 10000}`;
+                } else if (cmd.includes('search') || cmd.includes('find')) {
+                    const query = extractQuery(cmd);
+                    url += `/api/search?query=${query}&search_fields=all`;
+                } else if (cmd.includes('order') && cmd.includes('assigned')) {
+                    const person = extractValue(cmd, 'assigned to');
+                    url += `/api/assigned-to${person ? '?assigned_to=' + encodeURIComponent(person) : ''}`;
+                } else if (cmd.includes('order') || cmd.includes('all')) {
+                    url += '/api/orders?limit=10';
+                } else {
+                    resultsArea.value = '❓ Command not recognized. Try: "statistics", "dashboard", "approval summary", "pending approvals", "high value orders"';
+                    statusText.textContent = '❓ Command not recognized';
+                    statusText.className = 'status-text error';
+                    return;
+                }
+
+                console.log('Calling API:', url);
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultsArea.value = JSON.stringify(data, null, 2);
+                statusText.textContent = '✅ Command executed successfully';
+                statusText.className = 'status-text';
+            } catch (error) {
+                console.error('Fetch error:', error);
+                resultsArea.value = `❌ Error: ${error.message}\n\n📍 API URL: ${API_BASE_URL}\n\n💡 Make sure the API server is running on localhost:8000\n\nTo start the API, run:\ncd /Users/bhimsunnyrajbolluru/Documents/PO\npython3 main.py`;
+                statusText.textContent = '❌ Error executing command';
+                statusText.className = 'status-text error';
+            }
+        }
+
+        // Helper functions to extract values from voice command
+        function extractValue(cmd, keyword) {
+            const index = cmd.indexOf(keyword);
+            if (index !== -1) {
+                const afterKeyword = cmd.substring(index + keyword.length).trim();
+                const words = afterKeyword.split(' ');
+                return words[0] || '';
+            }
+            return '';
+        }
+
+        function extractNumber(cmd) {
+            const match = cmd.match(/\d+/);
+            return match ? parseInt(match[0]) : null;
+        }
+
+        function extractQuery(cmd) {
+            const cleanCmd = cmd.replace(/search for|find|search/gi, '').trim();
+            return encodeURIComponent(cleanCmd);
+        }
+
+        // Button Events
+        sendBtn.addEventListener('click', () => {
+            if (voiceCommand.trim()) {
+                processCommand(voiceCommand);
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            voiceCommand = '';
+            voiceInput.value = '';
+            resultsArea.value = '';
+            statusText.textContent = '';
+            sendBtn.disabled = true;
+        });
+
+        copyBtn.addEventListener('click', () => {
+            if (resultsArea.value) {
+                navigator.clipboard.writeText(resultsArea.value);
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy Results';
+                }, 2000);
+            }
+        });
+
+        // Allow Enter key to send command
+        voiceInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && voiceCommand.trim()) {
+                processCommand(voiceCommand);
+            }
+        });
+
+        // Disable send button initially
+        sendBtn.disabled = true;
+    </script>
+</body>
+</html>

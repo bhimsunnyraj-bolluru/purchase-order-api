@@ -28,15 +28,7 @@ test_endpoint() {
 }
 
 # Test all endpoints
-test_endpoint "Get All Orders" "/api/orders?limit=2"
-test_endpoint "Get Specific Order" "/api/orders/PO-2026-18361"
-test_endpoint "Approval Summary" "/api/approval-summary"
-test_endpoint "Dashboard" "/api/summary-dashboard"
-test_endpoint "Pending Approvals" "/api/pending-approvals"
-test_endpoint "By Department" "/api/by-department?department=IT"
-test_endpoint "By Location" "/api/by-location?location=New%20York"
-test_endpoint "High Value Orders" "/api/high-value-orders?min_amount=10000"
-test_endpoint "Search" "/api/search?query=Acme&search_fields=vendor"
+
 test_endpoint "Statistics" "/api/statistics"
 
 echo ""

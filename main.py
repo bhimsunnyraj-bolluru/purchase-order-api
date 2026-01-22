@@ -1,11 +1,21 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
 from typing import List, Dict, Optional
 from pathlib import Path
 
 app = FastAPI(title="Purchase Order API", description="API to read and manage Purchase Orders from CSV")
+
+# Enable CORS for all origins (allow voice dashboard and other clients)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Path to CSV file
 CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), "purchase_orders.csv")
