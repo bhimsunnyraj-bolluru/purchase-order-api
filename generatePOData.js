@@ -112,7 +112,7 @@ function generatePORecord() {
   };
 }
 
-function generateCSV(recordCount = 1000) {
+function generateCSV(recordCount = 10000) {
   // Generate records
   const records = [];
   for (let i = 0; i < recordCount; i++) {
@@ -142,7 +142,7 @@ function generateCSV(recordCount = 1000) {
 
 // Main execution
 const args = process.argv.slice(2);
-const recordCount = args[0] ? parseInt(args[0]) : 1000;
+const recordCount = args[0] ? parseInt(args[0]) : 10000;
 
 console.log(`Generating ${recordCount} Purchase Order records...`);
 
